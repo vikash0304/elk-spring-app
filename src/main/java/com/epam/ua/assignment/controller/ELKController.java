@@ -1,0 +1,63 @@
+package com.epam.ua.assignment.controller;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Date;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+@RequestMapping("/elk")
+class ELKController {
+	private static final Logger LOG = Logger.getLogger(ELKController.class.getName());
+
+	@Autowired
+	RestTemplate restTemplete;
+
+	@Bean
+	RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/info")
+	public String helloWorld() {
+		String response = "Welcome to UA Assesment" + new Date();
+		LOG.log(Level.INFO, response);
+
+		return response;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/exception")
+	public String exception() {
+		String response = "";
+		try {
+			throw new Exception("Something went Wrong!!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e);
+
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			String stackTrace = sw.toString();
+			LOG.error("Exception - " + stackTrace);
+			response = stackTrace;
+		}
+		return response;
+	}
+
+}
